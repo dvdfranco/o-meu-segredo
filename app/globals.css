@@ -1,0 +1,181 @@
+:root {
+  /* Mantine default dark theme palette (dark.6/7/8 + blue.6) */
+  --background: #1a1b1e;
+  --surface: #141517;
+  --foreground: #c1c2c5;
+  --muted: #909296;
+  --border: #373a40;
+  --card: #25262b;
+  --accent: #228be6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.site {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.site-title {
+  display: inline-block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.site-tagline {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+main {
+  flex: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  width: 100%;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.logout-button {
+  margin-top: 0.75rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font: inherit;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  color: var(--foreground);
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.75rem;
+}
+
+.subtitle {
+  margin: 0 0 2rem;
+  color: var(--muted);
+}
+
+.secret-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.secret-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.secret-card__text {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.secret-card__image {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.secret-card__meta {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.state {
+  color: var(--muted);
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 320px;
+  margin-top: 1.5rem;
+}
+
+.login-form label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.login-form input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+}
+
+.login-form button {
+  margin-top: 1rem;
+  background: var(--foreground);
+  color: var(--background);
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+}
+
+.login-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
