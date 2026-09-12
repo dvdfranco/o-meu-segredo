@@ -20,7 +20,7 @@ import {
   IconPhotoUp,
   IconShieldLock,
 } from '@tabler/icons-react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useState } from 'react';
 import UploadSecret from '@/app/components/UploadSecret';
 import useSecrets from '@/app/hooks/useSecrets';
@@ -33,12 +33,12 @@ type AddSecretFormValues = {
 export default function AddSecret() {
   const { addSecret } = useSecrets();
   const [submitted, setSubmitted] = useState(false);
-  const form = useForm<AddSecretFormValues>({
+  const { control, reset, handleSubmit, register, formState, setError } = useForm<AddSecretFormValues>({
     defaultValues: { description: '' },
     mode: 'onChange',
   });
 
-  const description = form.watch('description') ?? '';
+  const description = useWatch({ control, name: 'description' }) ?? '';
 
   const onSubmit = async (values: AddSecretFormValues) => {
     try {
@@ -48,7 +48,7 @@ export default function AddSecret() {
 
       setSubmitted(false);
       await addSecret(values.description, imageUrl);
-      form.reset();
+      reset();
       setSubmitted(true);
     } catch (error) {
       const message =
@@ -56,7 +56,7 @@ export default function AddSecret() {
           ? error.message
           : 'Não foi possível adicionar o segredo.';
 
-      form.setError('description', { type: 'manual', message });
+      setError('description', { type: 'manual', message });
     }
   };
 
@@ -69,7 +69,7 @@ export default function AddSecret() {
 
   return (
     <form
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit)}
       style={{
         width: '100vw',
         marginLeft: 'calc(50% - 50vw)',
@@ -103,7 +103,7 @@ export default function AddSecret() {
                 minRows={3}
                 maxLength={140}
                 aria-label="Meu segredo"
-                {...form.register('description', {
+                {...register('description', {
                   required: 'Digite algo.',
                   validate: (value) =>
                     value.trim().length > 0 || 'Digite algo.',
@@ -112,7 +112,7 @@ export default function AddSecret() {
                     message: 'Máximo de 140 caracteres.',
                   },
                 })}
-                error={form.formState.errors.description?.message}
+                error={formState.errors.description?.message}
               />
 
               <Group justify="space-between" mt="xs">
@@ -122,8 +122,8 @@ export default function AddSecret() {
 
                 <Button
                   type="submit"
-                  loading={form.formState.isSubmitting}
-                  disabled={form.formState.isSubmitting}
+                  loading={formState.isSubmitting}
+                  disabled={formState.isSubmitting}
                 >
                   Enviar
                 </Button>

@@ -1,5 +1,5 @@
 'use client';
-
+import { Image } from '@mantine/core';
 import useSecrets from '@/app/hooks/useSecrets';
 import { format } from 'date-fns';
 
@@ -22,7 +22,7 @@ export default function SecretsTable() {
       {secrets.map((secret) => (
         <article key={secret.id} className="secret-card">
           {secret.image_url ? (
-            <img
+            <Image
               className="secret-card__image"
               src={`${S3_URL}/${secret.image_url}`}
               alt={secret.description}

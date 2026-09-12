@@ -9,6 +9,7 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from '@mantine/core';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Meu Segredo',
@@ -36,9 +37,9 @@ export default async function RootLayout({
             <div className="site">
               <header className="site-header">
                 <div className="site-header__inner">
-                  <a href="/" className="site-title">
+                  <Link href="/" className="site-title">
                     {metadata.title!.toString()}
-                  </a>
+                  </Link>
                   <p className="site-tagline">{metadata.description}</p>
                 </div>
               </header>

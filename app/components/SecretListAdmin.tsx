@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
-import { Box, Button, LoadingOverlay, Pagination, Switch, Table, Text } from '@mantine/core';
+import { Box, Button, Image, LoadingOverlay, Pagination, Switch, Table, Text } from '@mantine/core';
 import './SecretListAdmin.scss';
 import useSecrets from '../hooks/useSecrets';
 import { IconTrash } from '@tabler/icons-react';
@@ -14,11 +14,15 @@ export default function SecretsTable() {
   const { secrets, total, isLoading, loadingUpdate, hasError, setPublished, deleteSecret } = useSecrets(false, activePage, pageSize);
   const pageCount = Math.ceil(total / pageSize);
 
-  useEffect(() => {
-    if (pageCount > 0 && activePage > pageCount) {
-      setActivePage(pageCount);
-    }
-  }, [activePage, pageCount]);
+  const handleDelete = (id: number) => {
+
+        const shouldGoToPreviousPage = secrets.length === 1 && activePage > 1;
+
+        if (shouldGoToPreviousPage) {
+          setActivePage((previousPage) => previousPage - 1);
+        }
+
+        deleteSecret(id);  }
 
   const openDeleteModal = (id: number) =>
     modals.openConfirmModal({
@@ -30,7 +34,7 @@ export default function SecretsTable() {
       labels: { confirm: 'Excluir', cancel: 'Cancelar' },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('c'),
-      onConfirm: () => deleteSecret(id),
+      onConfirm: () => handleDelete(id),
     });
 
   if (hasError)
@@ -79,7 +83,7 @@ export default function SecretsTable() {
                       });
                     }}
                   >
-                    <img src={`${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`} alt="Imagem do segredo" className="secret-card__thumb" />
+                    <Image src={`${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`} alt="Imagem do segredo" className="secret-card__thumb" />
                   </a>
                 )}
               </Table.Td>
