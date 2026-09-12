@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createSecret, listSecrets } from '../services/secrets';
+import SecretService from '../services/SecretService';
 import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../utils';
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     if (!publishedOnly && (!await checkAuthenticated()))
         return UnauthorizedResponse;
 
-    const result = await listSecrets(publishedOnly, page, pageSize);
+    const result = await SecretService.listSecrets(publishedOnly, page, pageSize);
     return NextResponse.json(result);
   } catch (error) {
     console.error('GET /api/secrets failed', error);
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
 
   try {
     rateLimit.set(ip, now);
-    await createSecret(description, imageUrl);
+    await SecretService.createSecret(description, imageUrl);
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error('POST /api/secrets failed', error);

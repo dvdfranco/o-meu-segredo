@@ -10,6 +10,7 @@
     "format": "prettier --write \"next.config.ts\" \"next-env.d.ts\" \"app/**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@google/genai": "^2.22.0",
     "@mantine/core": "^9.6.1",
     "@mantine/dropzone": "^9.6.1",
     "@mantine/form": "^9.6.1",

@@ -190,15 +190,16 @@ export default function AddSecret() {
                 <List.Item>
                   Utilize frases curtas e sucintas. Evite uma longa história.
                 </List.Item>
+                <List.Item>Evite linguagem imprópria.</List.Item>
                 <List.Item>
                   <strong>Não mencione</strong> nomes nem dados que identifiquem
                   você ou outra pessoa.
                 </List.Item>
                 <List.Item>
-                  <strong>Evite</strong> linguagem imprópria.
+                  <strong>Não compartilhe</strong> informações confidenciais.
                 </List.Item>
                 <List.Item>
-                  <strong>Não compartilhe</strong> informações confidenciais.
+                  <strong>Não envie fotos</strong> de pessoas reais, mesmo que não sejam identificáveis.
                 </List.Item>
               </List>
             </Stack>

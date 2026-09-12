@@ -1,28 +1,64 @@
 'use client';
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { Box, Button, Image, LoadingOverlay, Pagination, Switch, Table, Text } from '@mantine/core';
+import { Box, Button, Group, Image, LoadingOverlay, Modal, Pagination, Switch, Table, Text } from '@mantine/core';
 import './SecretListAdmin.scss';
 import useSecrets from '../hooks/useSecrets';
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconPhoto } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { Lightbox } from '@mantine/lightbox';
+import GenerateImageForm from './GenerateImageForm';
+import useUpload from '../hooks/useUpload';
+import { base64ToFile } from '../utils/utils';
 
 export default function SecretsTable() {
   const [activePage, setActivePage] = useState(1);
   const pageSize = 50;
-  const { secrets, total, isLoading, loadingUpdate, hasError, setPublished, deleteSecret } = useSecrets(false, activePage, pageSize);
+
+  const { secrets, total, isLoading, loadingUpdate, hasError, setPublished, deleteSecret, updateImage } = useSecrets(false, activePage, pageSize);
   const pageCount = Math.ceil(total / pageSize);
 
-  const handleDelete = (id: number) => {
+  const [newImageCreated, setNewImageCreated] = useState<string | null>(null);
+  const [isGenerateImageModalOpen, setIsGenerateImageModalOpen] = useState(false);
+  const [selectedSecretId, setSelectedSecretId] = useState<number | null>(null);
+  const [selectedDescription, setSelectedDescription] = useState('');
+  const { uploadFile, deleteFile, isLoading: isUploading } = useUpload();
 
-        const shouldGoToPreviousPage = secrets.length === 1 && activePage > 1;
+  const handleDelete = async (id: number) => {
+    const shouldGoToPreviousPage = secrets.length === 1 && activePage > 1;
 
-        if (shouldGoToPreviousPage) {
-          setActivePage((previousPage) => previousPage - 1);
-        }
+    if (shouldGoToPreviousPage) {
+      setActivePage((previousPage) => previousPage - 1);
+    }
 
-        deleteSecret(id);  }
+    const imageUrl = secrets.find(secret => secret.id === id)?.image_url ?? '';
+
+    await deleteSecret(id);
+
+    try {
+      await deleteFile(imageUrl);
+    } catch (error) {
+      console.error('Failed to delete file:', error);
+    }
+  }
+
+  const closeGenerateImageModal = () => {
+    setIsGenerateImageModalOpen(false);
+    setSelectedSecretId(null);
+    setSelectedDescription('');
+    setNewImageCreated(null);
+  };
+
+  const handleSaveImage = async () => {
+    if (selectedSecretId === null || !newImageCreated)
+      return;
+
+    const file = base64ToFile(newImageCreated, 'new-image.jpg');
+    const url = await uploadFile(file, '/');
+    const fileName = url.substring(url.lastIndexOf('/') + 1);
+    await updateImage(selectedSecretId, fileName);
+    closeGenerateImageModal();
+  };
 
   const openDeleteModal = (id: number) =>
     modals.openConfirmModal({
@@ -37,6 +73,14 @@ export default function SecretsTable() {
       onConfirm: () => handleDelete(id),
     });
 
+  const openGenerateImageModal = (secretId: number, description: string) =>
+    {
+      setSelectedSecretId(secretId);
+      setSelectedDescription(description);
+      setNewImageCreated(null);
+      setIsGenerateImageModalOpen(true);
+    };
+
   if (hasError)
     return (
       <p className="state error">
@@ -48,12 +92,10 @@ export default function SecretsTable() {
 
   return (
     <Box pos="relative">
-      <LoadingOverlay visible={isLoading || loadingUpdate} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      <LoadingOverlay visible={isLoading || loadingUpdate || isUploading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <Table
         className="secret-list-admin-table"
         withTableBorder
-        // withColumnBorders
-        // striped
         highlightOnHover
       >
         <Table.Thead>
@@ -95,12 +137,18 @@ export default function SecretsTable() {
                   }
                 />
               </Table.Td>
-              <Table.Td>
+              <Table.Td className="secret-list-admin-table__options">
                 <Button
                   color="red"
                   onClick={() => openDeleteModal(secret.id)}
                 >
                   <IconTrash size={16} />
+                </Button>
+
+                <Button
+                  onClick={() => openGenerateImageModal(secret.id, secret.description)}
+                >
+                  <IconPhoto size={16} />
                 </Button>
               </Table.Td>
             </Table.Tr>
@@ -115,6 +163,22 @@ export default function SecretsTable() {
           onChange={setActivePage}
         />
       )}
+      <Modal
+        opened={isGenerateImageModalOpen}
+        onClose={closeGenerateImageModal}
+        title="Gerar imagem"
+        centered
+        size="50%"
+      >
+        <GenerateImageForm
+          fromDescription={selectedDescription}
+          onImageGenerated={(val: string | null) => setNewImageCreated(val)}
+        />
+        <Group justify="flex-end" mt="md">
+          <Button variant="default" onClick={closeGenerateImageModal}>Cancelar</Button>
+          <Button color="blue" onClick={handleSaveImage} disabled={!newImageCreated}>Salvar</Button>
+        </Group>
+      </Modal>
       <Lightbox.Provider />
     </Box>
   );

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { deleteSecret, updateSecretPublished } from '../../services/secrets';
+import SecretService from '../../services/SecretService';
 import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../../utils';
 export const dynamic = 'force-dynamic';
 
@@ -17,15 +17,19 @@ export async function PATCH(
     return ValidationErrorResponse('ID inválido.');
   }
 
-  const body: { is_published?: boolean } = await request
+  const body: { is_published?: boolean, image_url?: string } = await request
     .json()
     .catch(() => ({}));
-  if (typeof body.is_published !== 'boolean') {
-    return ValidationErrorResponse('is_published é obrigatório.');
+  if (typeof body.is_published !== 'boolean' && typeof body.image_url !== 'string') {
+    return ValidationErrorResponse('is_published ou image_url é obrigatório.');
   }
 
   try {
-    await updateSecretPublished(secretId, body.is_published);
+    await SecretService.updateSecret(secretId, {
+      image_url: body.image_url,
+      is_published: body.is_published,
+    });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(`PATCH /api/secrets/${id} failed`, error);
@@ -49,7 +53,7 @@ export async function DELETE(
   }
 
   try {
-    await deleteSecret(secretId);
+    await SecretService.deleteSecret(secretId);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error(`DELETE /api/secrets/${id} failed`, error);

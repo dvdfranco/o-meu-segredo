@@ -6,3 +6,8 @@ export type Secret = {
   is_published: boolean;
   is_own_art?: boolean;
 };
+
+export type UpdateSecretData = {
+  is_published?: boolean;
+  image_url?: string;
+};

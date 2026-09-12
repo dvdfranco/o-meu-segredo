@@ -101,6 +101,31 @@ export default function useSecrets(
     setLoadingUpdate(false);
   }
 
+  async function updateImage(id: number, imageUrl: string) {
+    setLoadingUpdate(true);
+    setHasError(false);
+
+    try {
+      const response = await fetch(`/api/secrets/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_url: imageUrl }),
+      });
+      if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+
+      setSecrets((current) =>
+        current.map((secret) =>
+          secret.id === id ? { ...secret, image_url: imageUrl } : secret,
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+      setHasError(true);
+    }
+
+    setLoadingUpdate(false);
+  }
+
   const deleteSecret = async (id: number) => {
     setLoadingUpdate(true);
     setHasError(false);
@@ -125,5 +150,5 @@ export default function useSecrets(
     setLoadingUpdate(false);
   }
 
-  return { secrets, total, isLoading, loadingUpdate, hasError, addSecret, setPublished, deleteSecret };
+  return { secrets, total, isLoading, loadingUpdate, hasError, addSecret, setPublished, updateImage, deleteSecret };
 }
