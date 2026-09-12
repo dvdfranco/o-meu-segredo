@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? 'secrets';
+const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? 'sec-images';
 
 export async function uploadSecretFile(file: File): Promise<string> {
   const url = process.env.SUPABASE_URL;

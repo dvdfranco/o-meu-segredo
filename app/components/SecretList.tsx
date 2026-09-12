@@ -5,10 +5,10 @@ import { format } from 'date-fns';
 
 export default function SecretsTable() {
   const S3_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
-  const { secrets, status } = useSecrets();
+  const { secrets, isLoading, hasError } = useSecrets(true, 1, 30);
 
-  if (status === 'loading') return <p className="state">Carregando…</p>;
-  if (status === 'error')
+  if (isLoading) return <p className="state">Carregando…</p>;
+  if (hasError)
     return (
       <p className="state error">
         Não foi possível carregar os últimos segredos.

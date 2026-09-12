@@ -1,36 +1,27 @@
 import { NextResponse } from 'next/server';
-import { updateSecretPublished } from '../../services/secrets';
-import { getSupabaseAuthClient } from '../../_lib/supabase-auth';
-
+import { deleteSecret, updateSecretPublished } from '../../services/secrets';
+import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../../utils';
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const supabase = await getSupabaseAuthClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 });
+  if (!await checkAuthenticated()){
+    return UnauthorizedResponse;
   }
 
   const { id } = await params;
   const secretId = Number(id);
   if (!Number.isInteger(secretId)) {
-    return NextResponse.json({ error: 'ID inválido.' }, { status: 400 });
+    return ValidationErrorResponse('ID inválido.');
   }
 
   const body: { is_published?: boolean } = await request
     .json()
     .catch(() => ({}));
   if (typeof body.is_published !== 'boolean') {
-    return NextResponse.json(
-      { error: 'is_published é obrigatório.' },
-      { status: 400 },
-    );
+    return ValidationErrorResponse('is_published é obrigatório.');
   }
 
   try {
@@ -38,9 +29,30 @@ export async function PATCH(
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(`PATCH /api/secrets/${id} failed`, error);
-    return NextResponse.json(
-      { error: 'Unable to update secret.' },
-      { status: 500 },
-    );
+    return ErrorResponse('Unable to update secret.');
+  }
+}
+
+
+export async function DELETE(
+  _: Request,
+  { params } : { params: Promise<{id: string }> },
+) {
+  if (!await checkAuthenticated()){
+    return UnauthorizedResponse;
+  }
+
+  const { id } = await params;
+  const secretId = Number(id);
+  if (!Number.isInteger(secretId)) {
+    return ValidationErrorResponse('ID inválido.');
+  }
+
+  try {
+    await deleteSecret(secretId);
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error(`DELETE /api/secrets/${id} failed`, error);
+    return ErrorResponse('Unable to delete secret.');
   }
 }

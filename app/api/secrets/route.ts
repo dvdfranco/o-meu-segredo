@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSecret, listSecrets } from '../services/secrets';
-import { getSupabaseAuthClient } from '../_lib/supabase-auth';
+import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,27 +9,28 @@ const rateLimit = new Map<string, number>();
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const publishedOnly = searchParams.get('publishedOnly') !== 'false';
+  const page = Number(searchParams.get('page') ?? '1');
+  const pageSize = Number(searchParams.get('pageSize') ?? '10');
+
+  if (
+    !Number.isInteger(page) ||
+    page < 1 ||
+    !Number.isInteger(pageSize) ||
+    pageSize < 1 ||
+    pageSize > 100
+  ) {
+    return ValidationErrorResponse('Parâmetros de paginação inválidos.');
+  }
 
   try {
-    if (!publishedOnly) {
-      const supabase = await getSupabaseAuthClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (!publishedOnly && (!await checkAuthenticated()))
+        return UnauthorizedResponse;
 
-      if (!user) {
-        return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 });
-      }
-    }
-
-    const secrets = await listSecrets(publishedOnly);
-    return NextResponse.json({ secrets });
+    const result = await listSecrets(publishedOnly, page, pageSize);
+    return NextResponse.json(result);
   } catch (error) {
     console.error('GET /api/secrets failed', error);
-    return NextResponse.json(
-      { error: 'Unable to retrieve secrets.' },
-      { status: 500 },
-    );
+    return ErrorResponse('Unable to retrieve secrets.');
   }
 }
 
@@ -57,19 +58,14 @@ export async function POST(request: Request) {
   if (imageUrl) {
     description = 'Imagem própria';
   }
+  else
   {
-    if (typeof description !== 'string' || description.trim().length === 0) {
-      return NextResponse.json(
-        { error: 'description é obrigatória.' },
-        { status: 400 },
-      );
+    if (description.trim().length === 0) {
+      return ValidationErrorResponse('O texto do seu segredo é obrigatório.');
     }
 
     if (description.trim().length > 140) {
-      return NextResponse.json(
-        { error: 'description deve ter no máximo 140 caracteres.' },
-        { status: 400 },
-      );
+      return ValidationErrorResponse('Seu segredo deve ter no máximo 140 caracteres.');
     }
   }
 
@@ -79,9 +75,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error('POST /api/secrets failed', error);
-    return NextResponse.json(
-      { error: 'Unable to create secret.' },
-      { status: 500 },
-    );
+    return ErrorResponse('Unable to create secret.');
   }
 }

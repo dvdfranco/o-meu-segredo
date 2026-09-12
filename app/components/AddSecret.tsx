@@ -43,7 +43,7 @@ export default function AddSecret() {
   const onSubmit = async (values: AddSecretFormValues) => {
     try {
       const imageUrl = values.imageUrl
-        ? values.imageUrl.substring(values.imageUrl.lastIndexOf('/') + 1)
+        ? "uploaded/" + values.imageUrl.substring(values.imageUrl.lastIndexOf('/') + 1)
         : undefined;
 
       setSubmitted(false);

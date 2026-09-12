@@ -14,7 +14,6 @@ export default function UploadSecret({ onUploaded }: UploadSecretProps) {
   const { uploadFile } = useUpload();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
   return (
     <div>
@@ -22,13 +21,9 @@ export default function UploadSecret({ onUploaded }: UploadSecretProps) {
         onDrop={(files) => {
           const file = files[0];
           if (file) {
-            // onStartUpload();
             setUploading(true);
             uploadFile(file)
-              .then((url) => {
-                setUploadedUrl(url);
-                onUploaded(url);
-              })
+              .then(onUploaded)
               .catch((uploadError) => {
                 setError(
                   uploadError instanceof Error
@@ -52,19 +47,11 @@ export default function UploadSecret({ onUploaded }: UploadSecretProps) {
             {uploading ? (
               <Loader size="sm" />
             ) : (
-              <Text>Arraste aqui ou clique para escolher uma imagem</Text>
+              <span>Arraste aqui ou clique para escolher uma imagem</span>
             )}
           </Text>
         </Group>
       </Dropzone>
-
-      {/* <Group gap="sm" align="center">
-        {uploadedUrl && !uploading && (
-          <Text size="sm" c="green">
-            Imagem enviada com sucesso.
-          </Text>
-        )}
-      </Group> */}
 
       {error && (
         <Text size="sm" c="red" mt="xs">

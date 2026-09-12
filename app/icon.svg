@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="100%" height="100%">
+  <!-- Background Container -->
+  <rect width="1000" height="1000" rx="180" ry="180" fill="#0D0E15" />
+  <path d="M 500,285 
+           C 425,120 185,120 100,280
+           C 0,470 215,690 500,925
+           C 785,690 1000,470 900,280
+           C 815,120 575,120 500,285 Z" 
+          fill="#D94A5A" />
+        <g id="padlock" transform="translate(0 50) translate(500 570) scale(0.82) translate(-500 -570)">
+    <path d="M 380,410
+             V 340 
+             A 120,120 0 0,1 620,340 
+             V 410" 
+          fill="none" 
+          stroke="#FFFFFF" 
+          stroke-width="50" 
+          stroke-linecap="round" />
+    <rect x="307" y="410" width="386" height="305" rx="70" ry="70" fill="#FFFFFF" />
+    <g fill="#0D0E15">
+      <!-- Circular Top -->
+      <circle cx="500" cy="525" r="32" />
+      <!-- Triangular/Trapezoidal Base -->
+      <path d="M 480,540 
+               L 465,620 
+               A 10,10 0 0,0 475,632 
+               H 525 
+               A 10,10 0 0,0 535,620 
+               L 520,540 Z" />
+    </g>
+  </g>
+</svg>

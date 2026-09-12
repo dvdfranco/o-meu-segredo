@@ -1,38 +1,56 @@
 import { useEffect, useState } from 'react';
 import type { Secret } from '@/app/api/types';
 
-export default function useSecrets(publishedOnly: boolean = true) {
+export default function useSecrets(
+  publishedOnly: boolean = true,
+  page: number = 1,
+  pageSize: number = 50,
+) {
   const [secrets, setSecrets] = useState<Secret[]>([]);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
-    'loading',
-  );
+  const [total, setTotal] = useState(0);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function load() {
+      setIsLoading(true);
+      setHasError(false);
+
       try {
-        const publishedOnlyParam = publishedOnly ? '' : '?publishedOnly=false';
-        const response = await fetch(`/api/secrets${publishedOnlyParam}`, {
+        const query = new URLSearchParams({
+          page: String(page),
+          pageSize: String(pageSize),
+        });
+        if (!publishedOnly) query.set('publishedOnly', 'false');
+
+        const response = await fetch(`/api/secrets?${query.toString()}`, {
           signal: controller.signal,
         });
         if (!response.ok) throw new Error(`Request failed: ${response.status}`);
 
-        const body: { secrets: Secret[] } = await response.json();
+        const body: { secrets: Secret[]; total: number } = await response.json();
         setSecrets(body.secrets);
-        setStatus('ready');
+        setTotal(body.total);
+        setIsLoading(false);
       } catch (error) {
         if (controller.signal.aborted) return;
         console.error(error);
-        setStatus('error');
+        setIsLoading(false);
+        setHasError(true);
       }
     }
 
     load();
     return () => controller.abort();
-  }, [publishedOnly]);
+  }, [page, pageSize, publishedOnly, refreshKey]);
 
   async function addSecret(description: string, imageUrl?: string) {
+    setIsLoading(true);
+
     const response = await fetch('/api/secrets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -49,12 +67,17 @@ export default function useSecrets(publishedOnly: boolean = true) {
 
     if (secret) {
       setSecrets((current) => [secret, ...current]);
+      setTotal((current) => current + 1);
     }
+    setIsLoading(false);
 
     return true;
   }
 
   async function setPublished(id: number, isPublished: boolean) {
+    setLoadingUpdate(true);
+    setHasError(false);
+
     const previous = secrets;
     setSecrets((current) =>
       current.map((secret) =>
@@ -72,8 +95,35 @@ export default function useSecrets(publishedOnly: boolean = true) {
     } catch (error) {
       console.error(error);
       setSecrets(previous);
+      setHasError(true);
     }
+
+    setLoadingUpdate(false);
   }
 
-  return { secrets, status, addSecret, setPublished };
+  const deleteSecret = async (id: number) => {
+    setLoadingUpdate(true);
+    setHasError(false);
+
+    const previous = secrets;
+    setSecrets(secrets.filter(secret => secret.id !== id));
+
+    try {
+      const response = await fetch(`/api/secrets/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json'},
+      });
+      if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+      setTotal((current) => Math.max(0, current - 1));
+      setRefreshKey((current) => current + 1);
+    } catch (error) {
+      console.error(error);
+      setSecrets(previous);
+      setHasError(true);
+    }
+
+    setLoadingUpdate(false);
+  }
+
+  return { secrets, total, isLoading, loadingUpdate, hasError, addSecret, setPublished, deleteSecret };
 }

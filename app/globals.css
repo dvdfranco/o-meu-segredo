@@ -120,8 +120,10 @@ h1 {
 
 .secret-card__image {
   display: block;
+  min-width: 500px;
   max-width: 100%;
   border-radius: 8px;
+  margin: auto;
 }
 
 .secret-card__meta {
