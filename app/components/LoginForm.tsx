@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Button, PasswordInput, TextInput } from "@mantine/core";
-import useLogin from "@/app/hooks/useLogin";
+import { Button, PasswordInput, TextInput } from '@mantine/core';
+import useLogin from '@/app/hooks/useLogin';
 
 export default function LoginForm() {
   const { register, error, submitting, handleSubmit } = useLogin();
@@ -13,14 +13,14 @@ export default function LoginForm() {
         type="email"
         autoComplete="username"
         required
-        {...register("email")}
+        {...register('email')}
       />
 
       <PasswordInput
         label="Senha"
         autoComplete="current-password"
         required
-        {...register("password")}
+        {...register('password')}
       />
 
       <Button type="submit" loading={submitting}>

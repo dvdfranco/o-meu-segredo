@@ -1,5 +1,11 @@
-import SecretList from "./components/SecretList";
+import SecretList from './components/SecretList';
+import AddSecret from './components/AddSecret';
 
 export default function HomePage() {
-  return <SecretList />;
+  return (
+    <>
+      <AddSecret />
+      <SecretList />
+    </>
+  );
 }

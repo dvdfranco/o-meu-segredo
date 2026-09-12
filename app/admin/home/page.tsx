@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
-import { getSupabaseAuthClient } from "../../api/_lib/supabase-auth";
-import SecretListAdmin from "@/app/components/SecretListAdmin";
+import { redirect } from 'next/navigation';
+import { getSupabaseAuthClient } from '../../api/_lib/supabase-auth';
+import SecretListAdmin from '@/app/components/SecretListAdmin';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function AdminHomePage() {
   const supabase = await getSupabaseAuthClient();
@@ -10,7 +10,7 @@ export default async function AdminHomePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/admin");
+  if (!user) redirect('/admin');
 
   return (
     <main>

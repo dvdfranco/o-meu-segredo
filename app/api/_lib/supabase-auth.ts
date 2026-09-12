@@ -1,6 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Request-scoped Supabase client that reads/writes the auth session as cookies.
@@ -12,7 +12,7 @@ export async function getSupabaseAuthClient(): Promise<SupabaseClient> {
 
   if (!url || !key) {
     throw new Error(
-      "Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables."
+      'Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables.',
     );
   }
 

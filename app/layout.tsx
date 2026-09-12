@@ -1,12 +1,18 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { getSupabaseAuthClient } from "./api/_lib/supabase-auth";
+import type { Metadata } from 'next';
+import './globals.css';
+import { getSupabaseAuthClient } from './api/_lib/supabase-auth';
 import '@mantine/core/styles.css';
-import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps, useMantineTheme } from '@mantine/core';
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  createTheme,
+  mantineHtmlProps,
+  useMantineTheme,
+} from '@mantine/core';
 
 export const metadata: Metadata = {
-  title: "Meu Segredo",
-  description: "Segredos reais e anônimos, compartilhados com segurança.",
+  title: 'Meu Segredo',
+  description: 'Segredos reais e anônimos, compartilhados com segurança.',
 };
 
 export default async function RootLayout({
@@ -32,16 +38,17 @@ export default async function RootLayout({
                 <a href="/" className="site-title">
                   {metadata.title!.toString()}
                 </a>
-                <p className="site-tagline">
-                  {metadata.description}
-                </p>
+                <p className="site-tagline">{metadata.description}</p>
               </div>
             </header>
 
             <main>{children}</main>
 
             <footer className="site-footer">
-              <p>© {new Date().getFullYear()} {metadata.title!.toString()}. Todos os segredos são anônimos.</p>
+              <p>
+                © {new Date().getFullYear()} {metadata.title!.toString()}. Todos
+                os segredos são anônimos.
+              </p>
               {user && (
                 <form action="/api/auth/logout" method="post">
                   <button type="submit" className="logout-button">

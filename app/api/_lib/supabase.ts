@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 let client: SupabaseClient | undefined;
 
@@ -13,7 +13,7 @@ export function getSupabaseClient(): SupabaseClient {
 
   if (!url || !key) {
     throw new Error(
-      "Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables."
+      'Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables.',
     );
   }
 
