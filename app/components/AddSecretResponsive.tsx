@@ -14,7 +14,6 @@ export default function AddSecretResponsive() {
   const [opened, { toggle }] = useDisclosure(false);
 
   if (!isMobile) return <AddSecret />;
-
   return (
     <section className="add-secret-mobile" aria-label="Enviar segredo">
       <Stack gap="sm">
