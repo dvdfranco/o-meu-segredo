@@ -98,6 +98,24 @@ h1 {
   color: var(--muted);
 }
 
+.add-secret-mobile {
+  margin-bottom: 1.25rem;
+}
+
+.add-secret-mobile__toggle {
+  background: linear-gradient(135deg, #1f6fd1 0%, #2b8be6 100%);
+  box-shadow: 0 8px 18px rgba(34, 139, 230, 0.25);
+}
+
+.add-secret-mobile__toggle:hover {
+  filter: brightness(1.05);
+}
+
+.add-secret-mobile__panel {
+  overflow: hidden;
+  background: var(--surface);
+}
+
 .secret-list {
   display: flex;
   flex-direction: column;
@@ -110,21 +128,24 @@ h1 {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .secret-card__text {
   margin: 0;
   line-height: 1.6;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .secret-card__image {
   display: block;
-  width: auto !important;
-  min-width: 500px;
+  width: 100% !important;
+  min-width: 0;
   max-width: 100%;
+  height: auto;
   border-radius: 8px;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .secret-card__meta {
@@ -132,6 +153,22 @@ h1 {
   font-size: 0.75rem;
   color: var(--muted);
   opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  main {
+    padding: 2rem 1rem;
+  }
+
+  .secret-list {
+    gap: 1rem;
+  }
+
+  .secret-card {
+    padding: 1rem;
+    border-radius: 10px;
+  }
 }
 
 .state {

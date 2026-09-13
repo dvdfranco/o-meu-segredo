@@ -1,10 +1,10 @@
 import SecretList from './components/SecretList';
-import AddSecret from './components/AddSecret';
+import AddSecretResponsive from './components/AddSecretResponsive';
 
 export default function HomePage() {
   return (
     <>
-      <AddSecret />
+      <AddSecretResponsive />
       <SecretList />
     </>
   );
