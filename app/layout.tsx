@@ -29,6 +29,15 @@ export default async function RootLayout({
   return (
     <html lang="ptbr" {...mantineHtmlProps}>
       <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-W4ZRPM68ZQ"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-W4ZRPM68ZQ');
+        </script>
         <ColorSchemeScript />
       </head>
       <body>
