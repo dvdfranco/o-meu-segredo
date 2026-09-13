@@ -4,6 +4,8 @@ import { getSupabaseAuthClient } from './api/_lib/supabase-auth';
 import '@mantine/core/styles.css';
 import '@mantine/lightbox/styles.css';
 import { ModalsProvider } from '@mantine/modals';
+import Script from 'next/script';
+import { Analytics } from "@vercel/analytics/next"
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -27,17 +29,20 @@ export default async function RootLayout({
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="ptbr" {...mantineHtmlProps}>
+    <html lang="pt-BR" {...mantineHtmlProps}>
       <head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-W4ZRPM68ZQ"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-W4ZRPM68ZQ');
-        </script>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-W4ZRPM68ZQ"
+        />
+        <Script id="google-analytics">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-W4ZRPM68ZQ');
+          `}
+        </Script>
         <ColorSchemeScript />
       </head>
       <body>
@@ -71,6 +76,7 @@ export default async function RootLayout({
             </div>
           </ModalsProvider>
         </MantineProvider>
+        <Analytics />
       </body>
     </html>
   );
