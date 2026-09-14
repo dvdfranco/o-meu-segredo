@@ -122,6 +122,10 @@ h1 {
   gap: 1.5rem;
 }
 
+.pagination {
+  margin-top: 2rem;
+}
+
 .secret-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -146,6 +150,42 @@ h1 {
   height: auto;
   border-radius: 8px;
   margin: 0 auto;
+}
+
+.secret-card__image-link {
+  display: block;
+}
+
+.secret-detail {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.secret-detail__back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+}
+
+.secret-detail__image {
+  display: block;
+  width: 100% !important;
+  height: auto;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+}
+
+.secret-detail__text {
+  margin: 1.5rem 0 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.secret-detail__meta {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.75rem;
 }
 
 .secret-card__meta {

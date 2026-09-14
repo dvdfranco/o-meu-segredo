@@ -5,15 +5,22 @@ export default function useSecrets(
   publishedOnly: boolean = true,
   page: number = 1,
   pageSize: number = 50,
+  initialSecrets?: Secret[],
+  initialTotal?: number,
 ) {
-  const [secrets, setSecrets] = useState<Secret[]>([]);
-  const [total, setTotal] = useState(0);
+  const hasInitialData = initialSecrets !== undefined;
+  const [secrets, setSecrets] = useState<Secret[]>(initialSecrets ?? []);
+  const [total, setTotal] = useState(initialTotal ?? 0);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!hasInitialData);
   const [hasError, setHasError] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    if (hasInitialData && refreshKey === 0) {
+      return;
+    }
+
     const controller = new AbortController();
 
     async function load() {
@@ -46,7 +53,7 @@ export default function useSecrets(
 
     load();
     return () => controller.abort();
-  }, [page, pageSize, publishedOnly, refreshKey]);
+  }, [page, pageSize, publishedOnly, refreshKey, hasInitialData]);
 
   async function addSecret(description: string, imageUrl?: string) {
     setIsLoading(true);

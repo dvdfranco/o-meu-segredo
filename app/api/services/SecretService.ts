@@ -37,6 +37,35 @@ class SecretService {
     };
   }
 
+  static async getPublishedSecret(id: number): Promise<Secret | null> {
+    const { data, error } = await getSupabaseClient()
+      .from('secrets')
+      .select('id, created_at, description, image_url, is_published')
+      .eq('id', id)
+      .eq('is_published', true)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`Failed to load secret: ${error.message}`);
+    }
+
+    return (data ?? null) as Secret | null;
+  }
+
+  static async listPublishedSecretIds(): Promise<Pick<Secret, 'id' | 'created_at'>[]> {
+    const { data, error } = await getSupabaseClient()
+      .from('secrets')
+      .select('id, created_at')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to load published secret IDs: ${error.message}`);
+    }
+
+    return (data ?? []) as Pick<Secret, 'id' | 'created_at'>[];
+  }
+
   static async createSecret(
     description: string,
     imageUrl?: string,
