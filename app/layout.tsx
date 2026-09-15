@@ -51,6 +51,7 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" {...mantineHtmlProps}>
       <head>
+        <meta name="google-site-verification" content="hJGds8d7nZg97qyU5Vl0ZV-nsUmFRqRJxHhBT_HnAe4" />
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-W4ZRPM68ZQ"
