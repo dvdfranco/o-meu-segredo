@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import SecretService from '../services/SecretService';
-import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../utils';
+import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../utilsApi';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
   try {
     if (!publishedOnly && (!await checkAuthenticated()))
-        return UnauthorizedResponse;
+        return UnauthorizedResponse();
 
     const result = await SecretService.listSecrets(publishedOnly, page, pageSize);
     return NextResponse.json(result);

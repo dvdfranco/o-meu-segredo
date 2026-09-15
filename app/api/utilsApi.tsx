@@ -5,7 +5,7 @@ export const ValidationErrorResponse = (message: string) => NextResponse.json({ 
 
 export const ErrorResponse = (message: string) => NextResponse.json({ error: message }, { status: 500 })
 
-export const UnauthorizedResponse = NextResponse.json({ error: 'Não autorizado.' }, { status: 401 });
+export const UnauthorizedResponse = () => NextResponse.json({ error: 'Não autorizado.' }, { status: 401 });
 
 export const checkAuthenticated = async () => {
   const supabase = await getSupabaseAuthClient();

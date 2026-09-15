@@ -5,6 +5,7 @@ export type Secret = {
   image_url?: string;
   is_published: boolean;
   is_own_art?: boolean;
+  published_at?: string | null;
 };
 
 export type UpdateSecretData = {

@@ -91,7 +91,7 @@ export default async function RootLayout({
                 </div>
               </header>
 
-              <main>{children}</main>
+              <main className="site-main">{children}</main>
 
               <footer className="site-footer">
                 <p>

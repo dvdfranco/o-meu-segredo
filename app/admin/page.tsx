@@ -13,9 +13,9 @@ export default async function AdminLoginPage() {
   if (user) redirect('/admin/home');
 
   return (
-    <main>
+    <section className="admin-page admin-page--narrow">
       <h1>Admin</h1>
       <LoginForm />
-    </main>
+    </section>
   );
 }

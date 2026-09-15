@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Box, Button, Group, Image, LoadingOverlay, Modal, Pagination, Switch, Table, Text } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import './SecretListAdmin.scss';
 import useSecrets from '../hooks/useSecrets';
 import { IconTrash, IconPhoto } from '@tabler/icons-react';
@@ -12,6 +13,7 @@ import useUpload from '../hooks/useUpload';
 import { base64ToFile } from '../utils/utils';
 
 export default function SecretsTable() {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [activePage, setActivePage] = useState(1);
   const pageSize = 50;
 
@@ -93,68 +95,70 @@ export default function SecretsTable() {
   return (
     <Box pos="relative">
       <LoadingOverlay visible={isLoading || loadingUpdate || isUploading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-      <Table
-        className="secret-list-admin-table"
-        withTableBorder
-        highlightOnHover
-      >
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Data</Table.Th>
-            <Table.Th>Descrição</Table.Th>
-            <Table.Th>Imagem</Table.Th>
-            <Table.Th>Publicar</Table.Th>
-            <Table.Th>Opções</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {secrets.map((secret) => (
-            <Table.Tr key={secret.id}>
-              <Table.Td>{format(new Date(secret.created_at), 'dd/MM/yyyy')}</Table.Td>
-              <Table.Td>{secret.description}</Table.Td>
-              <Table.Td>
-                {secret.image_url && (
-                  <a
-                    href={secret.image_url}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      Lightbox.open({
-                        slides: [
-                          { src: `${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`, alt: 'Imagem do segredo' },
-                        ],
-                      });
-                    }}
-                  >
-                    <Image src={`${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`} alt="Imagem do segredo" className="secret-card__thumb" />
-                  </a>
-                )}
-              </Table.Td>
-              <Table.Td>
-                <Switch
-                  checked={secret.is_published}
-                  onChange={(event) =>
-                    setPublished(secret.id, event.currentTarget.checked)
-                  }
-                />
-              </Table.Td>
-              <Table.Td className="secret-list-admin-table__options">
-                <Button
-                  color="red"
-                  onClick={() => openDeleteModal(secret.id)}
-                >
-                  <IconTrash size={16} />
-                </Button>
-
-                <Button
-                  onClick={() => openGenerateImageModal(secret.id, secret.description)}
-                >
-                  <IconPhoto size={16} />
-                </Button>
-              </Table.Td>
+      <Table.ScrollContainer minWidth={720} type="native">
+        <Table
+          className="secret-list-admin-table"
+          withTableBorder
+          highlightOnHover
+        >
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Data</Table.Th>
+              <Table.Th>Descrição</Table.Th>
+              <Table.Th>Imagem</Table.Th>
+              <Table.Th>Publicar</Table.Th>
+              <Table.Th>Opções</Table.Th>
             </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
+          </Table.Thead>
+          <Table.Tbody>
+            {secrets.map((secret) => (
+              <Table.Tr key={secret.id}>
+                <Table.Td>{format(new Date(secret.created_at), 'dd/MM/yyyy')}</Table.Td>
+                <Table.Td>{secret.description}</Table.Td>
+                <Table.Td>
+                  {secret.image_url && (
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        Lightbox.open({
+                          slides: [
+                            { src: `${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`, alt: 'Imagem do segredo' },
+                          ],
+                        });
+                      }}
+                    >
+                      <Image src={`${process.env.NEXT_PUBLIC_BUCKET_URL}/${secret.image_url}`} alt="Imagem do segredo" className="secret-card__thumb" />
+                    </a>
+                  )}
+                </Table.Td>
+                <Table.Td>
+                  <Switch
+                    checked={secret.is_published}
+                    onChange={(event) =>
+                      setPublished(secret.id, event.currentTarget.checked)
+                    }
+                  />
+                </Table.Td>
+                <Table.Td className="secret-list-admin-table__options">
+                  <Button
+                    color="red"
+                    onClick={() => openDeleteModal(secret.id)}
+                  >
+                    <IconTrash size={16} />
+                  </Button>
+
+                  <Button
+                    onClick={() => openGenerateImageModal(secret.id, secret.description)}
+                  >
+                    <IconPhoto size={16} />
+                  </Button>
+                </Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+      </Table.ScrollContainer>
       {pageCount > 1 && (
         <Pagination
           className="secret-list-admin-pagination"
@@ -167,8 +171,8 @@ export default function SecretsTable() {
         opened={isGenerateImageModalOpen}
         onClose={closeGenerateImageModal}
         title="Gerar imagem"
-        centered
-        size="50%"
+        centered={!isMobile}
+        fullScreen={!!isMobile}
       >
         <GenerateImageForm
           fromDescription={selectedDescription}

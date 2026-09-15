@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import SecretService from '../../services/SecretService';
-import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../../utils';
+import { ErrorResponse, UnauthorizedResponse, ValidationErrorResponse, checkAuthenticated } from '../../utilsApi';
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(
@@ -8,7 +8,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   if (!await checkAuthenticated()){
-    return UnauthorizedResponse;
+    return UnauthorizedResponse();
   }
 
   const { id } = await params;
@@ -43,7 +43,7 @@ export async function DELETE(
   { params } : { params: Promise<{id: string }> },
 ) {
   if (!await checkAuthenticated()){
-    return UnauthorizedResponse;
+    return UnauthorizedResponse();
   }
 
   const { id } = await params;

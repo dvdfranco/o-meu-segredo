@@ -13,10 +13,10 @@ export default async function AdminHomePage() {
   if (!user) redirect('/admin');
 
   return (
-    <main>
+    <section className="admin-page">
       <h1>Admin</h1>
 
       <SecretListAdmin />
-    </main>
+    </section>
   );
 }

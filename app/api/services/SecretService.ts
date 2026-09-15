@@ -1,4 +1,3 @@
-import { PostgrestFilterBuilder } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../_lib/supabase';
 import type { Secret, UpdateSecretData } from '../types';
 
@@ -16,12 +15,14 @@ class SecretService {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
+    const sortBy = onlyPublished ? 'published_at': 'created_at';
+
     let query = getSupabaseClient()
       .from('secrets')
-      .select('id, created_at, description, image_url, is_published', {
+      .select('id, created_at, description, image_url, is_published, published_at', {
         count: 'exact',
       })
-      .order('created_at', { ascending: false });
+      .order(sortBy, { ascending: false });
 
     if (onlyPublished) query = query.eq('is_published', true);
 
@@ -40,7 +41,7 @@ class SecretService {
   static async getPublishedSecret(id: number): Promise<Secret | null> {
     const { data, error } = await getSupabaseClient()
       .from('secrets')
-      .select('id, created_at, description, image_url, is_published')
+      .select('id, created_at, description, image_url, is_published, published_at')
       .eq('id', id)
       .eq('is_published', true)
       .maybeSingle();
@@ -95,7 +96,7 @@ class SecretService {
     const client = getSupabaseClient().from('secrets')
 
     const thisSecret = (await client
-      .select('id, created_at, description, image_url, is_published, is_own_art')
+      .select('id, created_at, description, image_url, is_published, is_own_art, published_at')
       .eq('id', id)
       .single()
     ).data as Secret;    
@@ -104,7 +105,10 @@ class SecretService {
       thisSecret.image_url = data.image_url;
 
     if (data.is_published !== undefined)
+    {
       thisSecret.is_published = data.is_published;
+      thisSecret.published_at = data.is_published ? new Date().toISOString() : null;
+    }
 
     const { error } = await client.update(thisSecret).eq('id', id);
 
